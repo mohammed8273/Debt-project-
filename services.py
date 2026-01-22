@@ -50,3 +50,18 @@ def get_debts_by_customer(customer_id):
     rows = c.fetchall()
     conn.close()
     return [Debt(*row) for row in rows]
+
+
+def search_customer_by_name(name):
+    conn = connect()
+    c = conn.cursor()
+    
+    c.execute(
+        "SELECT id, name, phone, address FROM customers WHERE name LIKE ?",
+        (f"%{name}%",)
+    )
+    
+    rows = c.fetchall()
+    conn.close()
+    
+    return [Customer(*row) for row in rows]

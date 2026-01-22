@@ -1,5 +1,11 @@
 from database import create_table
-from services import add_customer, add_debt, get_all_customers, get_debts_by_customer
+from services import (
+    add_customer,
+    add_debt,
+    get_all_customers,
+    get_debts_by_customer,
+    search_customer_by_name
+)
 
 create_table()
 
@@ -15,13 +21,29 @@ def show_customers():
         else:
             print("   No debts")
 
+def search_customer():
+    name = input("Search name: ")
+    results = search_customer_by_name(name)
+    if results:
+        for cust in results:
+            print(cust)
+            debts = get_debts_by_customer(cust.id)
+            if debts:
+                for d in debts:
+                    print(f"   {d}")
+            else:
+                print("   No debts")
+    else:
+        print("No customer found")
+
 def main():
     while True:
         print("\n--- Debt System ---")
         print("1. Add Customer")
         print("2. Add Debt")
         print("3. View Customers and Debts")
-        print("4. Exit")
+        print("4. Search Customer")
+        print("5. Exit")
         choice = input("Select an option: ")
         
         if choice == "1":
@@ -29,14 +51,13 @@ def main():
             phone = input("Phone: ")
             address = input("Address: ")
             customer = add_customer(name, phone, address)
-            print(f"✅ Customer added: {customer}")
+            print(f"Customer added: {customer}")
         
         elif choice == "2":
             customers = get_all_customers()
             if not customers:
-                print("No customers found. Add a customer first.")
+                print("No customers found.")
                 continue
-            print("Select Customer ID:")
             for cust in customers:
                 print(f"{cust.id} - {cust.name}")
             try:
@@ -47,7 +68,7 @@ def main():
                 amount = float(input("Amount: "))
                 note = input("Note: ")
                 debt = add_debt(customer_id, amount, note)
-                print(f"✅ Debt added: {debt}")
+                print(f"Debt added: {debt}")
             except ValueError:
                 print("Invalid input.")
         
@@ -55,7 +76,9 @@ def main():
             show_customers()
         
         elif choice == "4":
-            print("Exiting...")
+            search_customer()
+        
+        elif choice == "5":
             break
         else:
             print("Invalid option.")
